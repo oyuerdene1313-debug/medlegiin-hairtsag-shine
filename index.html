@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1-100 Хариулт хайх сайт</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+    body { font-family: 'Roboto', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800 p-4 md:p-8">
+
+  <div class="max-w-3xl mx-auto space-y-6">
+    
+    <!-- Толгой хэсэг -->
+    <div class="text-center bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+      <h1 class="text-2xl md:text-3xl font-bold text-indigo-600 flex items-center justify-center gap-2">
+        <i class="fa-solid fa-lightbulb"></i> 1 - 100 Хариулт Хайгч
+      </h1>
+      <p class="text-slate-500 text-sm mt-1">1-ээс 100 хүртэлх тоог оруулах эсвэл сонгож хариултыг харна уу.</p>
+    </div>
+
+    <!-- Хайлтын хэсэг -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+      <label class="block text-sm font-semibold text-slate-700 mb-2">Дугаар хайх (1 - 100):</label>
+      <div class="flex gap-2">
+        <input type="number" id="numInput" min="1" max="100" placeholder="1-100 хооронд тоо бичнэ үү..."
+          class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-lg font-bold">
+        <button onclick="searchAnswer()" 
+          class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-xl transition flex items-center gap-2">
+          <i class="fa-solid fa-magnifying-glass"></i> Хайх
+        </button>
+      </div>
+    </div>
+
+    <!-- Хариулт харуулах карт -->
+    <div class="bg-white p-8 rounded-2xl shadow-md border border-indigo-100 text-center relative overflow-hidden">
+      <div class="absolute top-0 left-0 w-full h-2 bg-indigo-600"></div>
+      
+      <div class="text-xs uppercase tracking-widest text-indigo-500 font-bold mb-1">Асуултын / Тааврын дугаар</div>
+      <div id="displayNum" class="text-4xl font-extrabold text-indigo-600 mb-4">#1</div>
+      
+      <div class="min-h-[100px] flex items-center justify-center bg-slate-50 p-6 rounded-xl border border-slate-200 my-4">
+        <p id="displayText" class="text-xl font-bold text-slate-800">Бүх саруудад (бүх сар хамгийн багадаа 28 хоногтой).</p>
+      </div>
+
+      <!-- Өмнөх / Дараах товч -->
+      <div class="flex justify-between items-center mt-6">
+        <button onclick="prevAnswer()" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 rounded-lg text-slate-700 font-medium transition flex items-center gap-2">
+          <i class="fa-solid fa-arrow-left"></i> Өмнөх
+        </button>
+        <button onclick="nextAnswer()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition flex items-center gap-2">
+          Дараах <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- 1-100 Сонгох товчлуурууд -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+      <h2 class="text-sm font-semibold text-slate-700 mb-4">Шууд дарах товчлуурууд:</h2>
+      <div id="gridContainer" class="grid grid-cols-5 sm:grid-cols-10 gap-2 max-h-[250px] overflow-y-auto p-1">
+        <!-- Javascript-ээр 100 товчлуур үүснэ -->
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const answers = [
+      "Бүх саруудад (бүх сар хамгийн багадаа 28 хоногтой).",
+      "3 минутад (муур бүр нэг хулганыг 3 минутад барина).",
+      "Тэд хоорондоо тоглоогүй, өөр өөр хүнтэй тоглосон.",
+      "20 жилийн дараа (Эцэг 60, хүү 30 настай болно).",
+      "Өндөг.",
+      "Амралтын өдрүүдэд / Ням гарагт.",
+      "Гол нь ширгэсэн эсвэл мөстсөн байсан (эсвэл хоёр өөр эрэг дээрээс ирсэн).",
+      "Хүний хүүхэд (өлгийтэй байхдаа сууж, мөлхөх үедээ дөрвөн хөллөдөг).",
+      "2 унтарсан лаа үлдэнэ (бусад 2 асаалттай лаа нь хайлж дуусна).",
+      "Лифтийн товчлуурын дагуу эсвэл дээд давхрын оршин суугчид.",
+      "Тэр хүн халзан байсан.",
+      "Жин нь яг адилхан (хоёулаа 1 кг).",
+      "5 дүү.",
+      "Шүдэнз.",
+      "Ердөө 3 хүн (Эмээ, ээж, охин).",
+      "\"Буруу\" гэдэг үг өөрөө.",
+      "Буудахаас гарах чанга дуунаас айгаад нисээд явчихна.",
+      "Зам болон цагны зүү.",
+      "Тоть шувуу.",
+      "Зүсэж хувааж өгнө (эсвэл шүүсийг нь шахаж хуваана).",
+      "\"Цагаан толгой\" гэдэг үгэнд бүх үсэг ордог.",
+      "Сэтгэл хөдлөл / Зүрхний цохилт.",
+      "Эргэх (ротаци) хөдөлгөөн.",
+      "Могой болон шувууд.",
+      "Нэр болон хурууны хээ.",
+      "Монгол хэлэнд \"С\" үсгээр эхэлдэг өдөр байхгүй.",
+      "Цай болон ундаанд.",
+      "Зүүд зүүдлэх болон амьсгалах.",
+      "Цаг хугацаа болон ус.",
+      "Ээж ба хүү.",
+      "Тийм амьтан байхгүй (байгалийн жамаараа үс нь гууждаг).",
+      "Эм шувуу эсвэл тоглоом байсан.",
+      "Аль хэдийнэ га
